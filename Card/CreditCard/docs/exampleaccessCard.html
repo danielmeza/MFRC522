@@ -1,0 +1,594 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+<head>
+    <meta http-equiv="Content-Language" content="de-at" />
+    <title>How to read contactless credit card data via NFC with an Arduino or an ESP8266</title>
+    <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+    <link rel="stylesheet" href="formate.css" type="text/css" media="screen" />
+    <style>
+
+        <!--
+        body {
+            background-color: #FFFFFF;
+        }
+
+        * html body {
+            margin-top: 0px;
+        }
+
+            body.dp {
+            }
+
+        div.singlecolumnminwidth {
+            min-width: 920px;
+        }
+
+        * html div.singlecolumnminwidth {
+            width: expression((document.body.clientWidth < 920) ? "920px" : "100%" );
+        }
+
+        div.bucket {
+            padding: 5px 0em;
+        }
+
+        div.bucket {
+            padding: 5px 0em;
+        }
+
+            div.bucket div.content {
+                margin: 0.5em 0px 0em 25px;
+            }
+
+        -->
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <!-- lokal -->
+        <!--webbot bot="Include" U-Include="z intern/nav_kopf.htm" TAG="BODY" startspan -->
+
+        <div id="sitename">
+            <h1>Rothschopf Werner</h1>
+            <h2>rowex ganz privat</h2>
+        </div> <!-- sitename -->
+
+        <div id="mainmenu">
+            <ul>
+                <li><a class="current" href="http://werner.rothschopf.net/">home</a></li>
+                <li><a href="201703_arduino_esp82866_nfc.htm">Aktuelles</a></li>
+                <li><a href="projekte.htm">Technisches</a></li>
+                <li><a href="web_allgemein.htm">Internet & Co</a></li>
+                <li><a href="privat.htm">Gedankliches</a></li>
+                <li><a href="lungau/lungau.htm">Fotografisches</a></li>
+                <li><a href="links.htm">Links</a></li>
+                <li><a href="news.htm">History</a></li>
+                <li><a href="ecg.htm">ECG/Impressum</a></li>
+            </ul>
+        </div>  <!-- mainmenu -->
+        <!--webbot bot="Include" i-checksum="12335" endspan --><div id="wrap">
+            <!--webbot bot="Include" U-Include="z intern/nav_projekte.htm" TAG="BODY" startspan -->
+            <div id="leftside">
+                <a class="nav" href="201703_arduino_esp82866_nfc.htm">Arduino & Credit Cards</a><span class="hide"> | </span>
+                <a class="nav" href="201501_raspberry_kioskmode.htm">Raspberry Kiosk Mode</a><span class="hide"> | </span>
+                <a class="nav" href="201101_useranmeldung.htm">XP Useranmeldung</a><span class="hide"> | </span>
+                <a class="nav" href="201102_zweitermonitor.htm">2. Monitor ein/aus</a><span class="hide"> | </span>
+                <a class="nav" href="dvd.htm">DVD</a><span class="hide"> | </span>
+                <a class="nav" href="museum/oldies.htm">Museum</a><span class="hide"> | </span>
+                <a class="nav" href="kfzkunde.htm">KFZ-Kunde</a><span class="hide"> | </span>
+                <a class="nav" href="carhifi/carhifi.htm">Car Hifi</a><span class="hide"> | </span>
+
+                <h1>Projekte</h1>
+                <img src="img/colors.jpg" height="104" width="125" class="thumbnail" alt="Included colors" />
+            </div>  <!-- leftside -->
+            <!--webbot bot="Include" i-checksum="39500" endspan --><!--webbot bot="Include" U-Include="z intern/nav_rechts.htm" TAG="BODY" startspan -->
+            <div id="rightside">
+                <h1>Angebote</h1>
+                <script type="text/javascript"><!--
+  google_ad_client = "pub-7781358890544011";
+  //120x600, werner
+  google_ad_slot = "6238494713";
+  google_ad_width = 120;
+  google_ad_height = 600;
+  //--></script>
+                <script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+            </div> <!-- rightside -->
+            <!--webbot bot="Include" i-checksum="47143" endspan --><div id="content">
+
+
+                <h2>Reading Credit Card data via NFC with an Arduino/ESP8266</h2>
+                <p class="intro">
+                    MasterCard paypass and VISA payWavepay technologies enable
+                    usage of credit cards with a simple swipe at the POS.&nbsp; It's a contactless
+                    technology using NFC to read (credit) card data. I always wondered, if it
+                    is possible to read credit card data via NFC&nbsp; on an Arduino. So I gave it
+                    try ...
+                </p>
+                <p>
+                    I will not write a step by step how-to read a credit card on with an Arduino,
+                    but will point out the major steps. As prerequiste I asume you are familiar with
+                    Arduino, especially the Arduino IDE.
+                </p>
+                <h3>Hardware</h3>
+                <p>
+                    Obvoiusly you will need a <b>micro controller</b>, an <b>NFC</b> reader and some
+                    <b>test cards</b>.
+                </p>
+                <p>
+                    <img border="0" src="2017/IMGP3962cards.jpg" width="300" height="175" style="float: right" alt="Card - Arduino UNO - NodeMCU - ESP8266">As micro controller I prefer the <b>ESP8266</b> over the Arduino UNO because of it's
+                    much faster clock, much more RAM, much higher&nbsp; processing clock , much more
+                    functianality (i.e. WiFi on board) and ... much lower price. The PIN out is
+                    somehow loony, therefore I'm using a NodeMCU which has breadboard friendly 2.54mm pins, a
+                    USB-interface and a logic for flashing without pressing any buttons. If you want
+                    stick to the Arduino UNO - no problem, it should fit even on the limited flash
+                    of the UNO.
+                </p>
+                <p>&nbsp;</p>
+                <p>
+                    <img border="0" src="2017/IMGP3967cards.jpg" width="300" height="242" style="float: right" alt="Fake - Fake - Original">As NFC reader I'm using the <b>PN532</b> on the <b>ELECHOUSE NFC Module V3</b>.
+                </p>
+                <p>
+                    Warning: Don't mess around with fakes in this particular case. Just buy the original one
+                    directly from Elechouse for around USD 14. The shipping i quite fast - mine came
+                    within two weeks. To point it out again: Some fakes on Aliexpress for USD 5 are
+                    working fine, but most of them are not reading credit cards. My ratio is&nbsp; 3 (non
+                    working) to 1 (working). So spear time - and money - and buy the original one.
+                </p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>
+                    <img border="0" src="2017/IMGP3970cards.jpg" width="300" height="198" style="float: right">For testing you will need <b>cards</b>. Lot of cards - the more the better - best
+                    from different brands. Even if VISA and MasterCard share the same standard -
+                    they set even the EMV standard - there are a lot of differences which you might
+                    find out when playing around with the cards. Even VISA and VPAY or Master and
+                    Maestro have differences in the used tags. And we do not only want to read
+                    <b>credit cards</b> - we also want to read <b>debit cards</b>. My bank issues debit cards with
+                    NFC since years and I'm lucky that they have also an Android App with a 100% EMV
+                    compatible SIM based card emulation and a wearable micro card. All these EMV
+                    cards - debit and credit - are readable with an Arduino / ESP8266.
+                </p>
+                <h3>Software</h3>
+                <p>
+                    For programming the Arduino UNO (and the ESP8266) I'm using the <b>
+                        Arduino
+                        IDE
+                    </b>. Not much to say about it - love it or leave it.
+                </p>
+                <p>
+                    The <b>Adafruit_PN532 NFC library</b> for Arduino is a good starting point.
+                    Do yourself a favoir and play around with the shipped examples. Your hardware
+                    MUST work before you can go further. If the readMifare example doesn't show up the
+                    UID of your bank card don't even consider that the rest of this page will help
+                    you much. Most problems I had at the beginning was due to non perfectly working
+                    or counterfeight PN532 chips on fake modules. Once you have a working hardware -
+                    software shouldn't be a big issue.
+                </p>
+                <h2>Test setup</h2>
+                <p>
+                    <img border="0" src="2017/IMGP3963cards.jpg" width="300" height="217" style="float: right">Some
+                    words to my hardware setup:
+                </p>
+                <p>
+                    My test hardware consist of the NodeMCU an ELECHOUSE NFC Module V3, a DC/DC
+                    converter, a breadboard with a RGB LED WS2811 and a 2way relay card. The DC/DC
+                    converter the 12 V from the AC/DC wall outlet to 5V for the NodeMCU. The relais
+                    is used to open / or close my door when a valid card is swiped. The RGB Led
+                    WS2811 is just perfect together with the NodeMCU/ESP8266 because of the limited
+                    available GPIO's. You can control a lot of WS2811 on just one GPIO. So if you
+                    are running out of GPIOs but you have the need of displaying different states,
+                    head for the WS2811. But that's a different story.
+                </p>
+                <h3>Using the Adafruit_PN532 NFC library</h3>
+                <p>To send commands to the credit card with Adafruit_PN532 use inDataExchange. </p>
+                <p>
+                    Smartcards like credit or debit cards can be read by &quot;Application Protocol
+                    Data Unit&quot; - APDU.
+                </p>
+                <p>
+                    In the next example I show a short example for how to send data to the card
+                    and receive data from the card. The APDU is an array with your command, and if successfull, you will get back the
+                    answer (berBuffer), the length of the answer and a boolean success flag telling
+                    you if reading was &quot;successfull&quot;.
+                </p>
+                <p>Arduino-C:</p>
+<pre>bool success;
+uint8_t apdu[255];
+uint8_t berBuffer[255];
+uint8_t berLength=0;
+
+
+apdu[] ={0x00, 0xA4, 0x04, 0x00, 0x0e, 0x32, 0x50, 0x41, 0x59, 0x2e, 0x53, 0x59, 0x53, 0x2e, 0x44, 0x44, 0x46, 0x30, 0x31, 0x00};
+success = nfc.inDataExchange(apdu, sizeof(apdu), berBuffer, &amp;berLength);</pre>
+                <p>If reading was successfull</p>
+<pre>if (success)</pre>
+                <p>
+                    you have the card data answer in the berBuffer and the length of your Buffer
+                    in berLength.
+                </p>
+                <h2>Reading credit cards (and debit cards)</h2>
+                <h3>Application Selection</h3>
+                <p>
+                    When talking with credit cards the first step you do is to select the proper
+                    application. As nowbody knows which card you are swiping - you could just try
+                    each AID after the other, as soon as the card responses with 90 00 you have a
+                    right one. Well known AIDs are
+                </p>
+                <ul>
+                    <li>A0000000031010 Visa International</li>
+                    <li>A0000000032020 Visa International</li>
+                    <li>A0000000041010 Mastercard International</li>
+                    <li>A0000000043060 Mastercard International United States Maestro (Debit)</li>
+                </ul>
+                <p>
+                    AID's can be found in internet. It is a common approach to try each known AID
+                    and offer each working AID to the cardholder for an &quot;Application Selection&quot; or
+                    to choose the application with the highes priority.
+                </p>
+                <h3>Payment System Environment (PSE)</h3>
+
+
+                <p>
+                    The good thing about paypass/PayWave (NFC) reading versus reading with a
+                    contacted smart card reader ist, that on most contactless enabled cards you will find a
+                    file &quot;Payment System Environment (PSE)&quot;. That's a file with the information which
+                    AID's are available on the card.
+                </p>
+                <p>
+                    The filename used on NFC cards is 2pay.sys.ddf01. So our first APDU command will send
+                    a read 2pay.sys.ddf01 command:
+                </p>
+<pre>//              2  p  a  y  .  s  y  s  .  d  d  f  0  1
+00 a4 04 00 0e 32 50 41 59 2e 53 59 53 2e 44 44 46 30 31 00
+</pre>
+                <p>&nbsp;If he have success we get something back like:</p>
+<pre>6f 2c 84 0e 32 50 41 59 2e 53 59 53 2e 44 44 46 30 31 a5 1a bf 0c 17 61 15 4f 07 a0 00 00 00 04 30 60 87 01 01 50 07 4d 41 45 53 54 52 4f 90 00</pre>
+                <p>
+                    This is a nice BER-TLV. If not already done - you should google about
+                    BER-TLV. If you haven't found a BER-TLV parser yet, see the links on the end of
+                    the page. However, this is the information we got from PSE in a more readable
+                    form:
+                </p>
+<pre>
+6F File Control Information (FCI) Template (44 Byte)
+ 84 Dedicated file (DF) Name (14 Byte)
+    32 50 41 59 2E 53 59 53 2E 44 44 46 30 31
+ A5 File Control Information (FCI) Proprietary Template (26 Byte)
+  BF0C File Control Information (FCI) Issuer Discretionary Data (23 Byte)
+   61 Application Template (21 Byte)
+    4F Application Identifier (AID) - card (7 Byte)
+       A0 00 00 00 04 30 60
+    87 Application Priority Indicator (1 Byte)
+       01
+    50 Application Label (7 Byte)
+       4D 41 45 53 54 52 4F
+</pre>
+
+                <p>
+                    perfect: this card has an Application A0000000043060 - a MasterCard Debit
+                    (Maestro).
+                </p>
+                <p>So next step is to start this AID:</p>
+<pre>00 a4 04 00 07 a0 00 00 00 04 30 60 00</pre>
+                <p>hopefully we get something like:</p>
+<pre>6f 29 84 07 a0 00 00 00 04 30 60 a5 1e 50 07 4d 41 45 53 54 52 4f 5f 2d 04 64 65 65 6e 9f 38 03 9f 5c 08 bf 0c 05 9f 4d 02 0b 0a 90 00 </pre>
+                <p>
+                    Voila - we are in! This information looks very similar to the PSE, but beside
+                    the AID and the application label the first new information is the Language
+                    Preference of the cardholder. So if you plan to design a multi language GUI -
+                    here you have the cardholder preference. Up to 4 languages in the prefered
+                    order. In our example: de en - meaning German (de) and English (en). There can
+                    be up to 4 languages in the File Control Information (FCI).
+                </p>
+                <p>
+                    Very important for further processing is the Processing Option Data Object
+                    List (PDOL). In the Example 9F 5C 08
+                </p>
+
+<pre>
+6F File Control Information (FCI) Template (41 Byte)
+ 84 Dedicated file (DF) Name (7 Byte)
+    A0 00 00 00 04 30 60
+ A5 File Control Information (FCI) Proprietary Template (30 Byte)
+  50 Application Label (7 Byte)
+     4D 41 45 53 54 52 4F
+  5F2D Language Preference (4 Byte)
+     64 65 65 6E
+  9F38 Processing Options Data Objekt List (PDOL) (3 Byte)
+     9F 5C 08
+  BF0C File Control Information (FCI) Issuer Discretionary Data (5 Byte)
+   9F4D Log Entry (2 Byte)
+      0B 0A
+</pre>
+
+                <p>
+                    This concludes the application selection. Please keep in mind, that not each
+                    card has the PSE. If the PSE is missing you have to try'n'error each possible
+                    AID. Keep in mind, that there can be also more than one AID on the card. In this
+                    case you should ask the cardholder which AID should be startet. For that reason
+                    each AID also has an Application Label. If you want to walkt straight through -
+                    each Application has a priority and you can choose the AID with the highest
+                    priority.
+                </p>
+                <h2>Initiate Application Process</h2>
+                <p>
+                    With the information of the PDOL we can get the Application File Locator. My
+                    example card wants 8 bytes for the Tag 9F 5C. 9F 5C is &quot;DS Requested Operator
+                    ID&quot;. Some cards might request other information from you, some cards don't
+                    provide information to PDOL...
+                </p>
+                <p>
+                    So, we lookup each requested tag and try to provide the information to the
+                    card. If there are more tags requested, we concatenate our answers. If you can't
+                    find out which data to send, try at 00 values.
+                </p>
+                <p>
+                    Our total datalength in the example is 8, we add the Tag 83 which means we
+                    send 10 bytes (0x0a) to the card.
+                </p>
+<pre>80 a8 00 00 <font color="#000080">0a</font> <font color="#FF00FF">83</font> <font color="#008000">08</font> <font color="#0000FF">00 00 00 00 00 00 00 00</font> 00          our APDU
+//                                                       
+                <font color="#0000FF">00 00 00 00 00 00 00 00</font>             the requested data
+                <font color="#008000">08</font>                                     the length of all data
+                <font color="#FF00FF">83</font>                                        Tag for PDOL
+                <font color="#000080">0a</font>                                           Length of message incl. data length byte and Tag 83 
+80 a8 00 00                                  00          fixed</pre>
+                <p>If the card doesn't request any PDOL in the FCI, just send an empty Tag 83:</p>
+<pre>80 a8 00 00 <font color="#000080">02</font> <font color="#FF00FF">83</font> <font color="#008000">00</font> 00          our APDU
+               
+                <font color="#008000">00</font>             no data requested
+                <font color="#FF00FF">83</font>                Tag for PDOL 
+                <font color="#000080">02</font>                   Length of message incl. data length byte and Tag 83 
+80 a8 00 00          00          fixed</pre>
+                <p>
+                    What I've seen so far, VISA cards want a lot of information. Here are some
+                    examples of fields which must not be left zeroed:
+                </p>
+                <table border="1" width="83%" id="table1">
+                    <tr>
+                        <th width="64">Tag</th>
+                        <th width="299">Name</th>
+                        <th width="129">Length</th>
+                        <th>example data</th>
+                    </tr>
+                    <tr>
+                        <td width="64">9F 66</td>
+                        <td width="299">Terminal Transaction Qualifiers</td>
+                        <td width="129">4</td>
+                        <td>F3 20 40 00</td>
+                    </tr>
+                    <tr>
+                        <td width="64">5F 2A</td>
+                        <td width="299">Transaction Currency Code</td>
+                        <td width="129">2</td>
+                        <td>09 78</td>
+                    </tr>
+                </table>
+                <p>&nbsp;</p>
+                <p>Our Maestro example answers:</p>
+<pre>77 16 82 02 19 80 94 10 08 01 03 03 10 01 02 00 10 04 04 00 20 01 01 01 90 00</pre>
+                <p>
+                    and the most important information is the tag 94 AFL now. (Beside template 77
+                    there are is also template 88 - but I don't have an example of that.)
+                </p>
+
+<pre>
+77 Response Message Template Format 2 (22 Byte)
+ 82 Application Interchange Profile (2 Byte)
+    19 80
+ 94 Application File Locator (AFL) (16 Byte)
+    08 01 03 03 10 01 02 00 10 04 04 00 20 01 01 01</pre>
+
+                <h3>Read Application Data</h3>
+                <p>
+                    Out of the information of the 94 Application File Locator we get information
+                    about the Application Files in groups of 4 bytes.
+                </p>
+<pre>SFI  start   end   Number of records in data authentication 
+08   01      03    03
+10   01      02    00 
+10   04      04    00 
+20   01      01    01</pre>
+                <p>
+                    Now we can build the APDUs for each group. Meaning: one group can result in
+                    more APDUs. The first group of the example has start 1 and end 3 so a total of 3
+                    files to read,&nbsp; the second group will generate 2 APDUs, the third one APDU
+                    and fourth group again each one APDU.
+                </p>
+                <p>Each APDU will look like following:</p>
+<pre>//CLA = 0x00;
+//INS = 0xB2;
+//P1 = start - first record
+//P2 = Reference Control according Table
+//LE = Number of bytes to be read</pre>
+                <p>
+                    P1 - the start - will be 1 for the first iterartion of our first group. (Be
+                    carefull with group 3, as it will start with 4!)
+                </p>
+<pre>08   01      03    03</pre>
+                <p>
+                    The five most significant bits of our actualGroup[0] contains the SFI.&nbsp;
+                    Therefore we shift to right to get the SFI
+                </p>
+<pre>uint8_t SFI = actualGroup[0] &gt;&gt; 3;</pre>
+                <p>So, if you had from our first group above</p>
+<pre>actualGroup[0] = 0x08 = 0b00001000;  </pre>
+                <p>we get</p>
+<pre>           SFI =        0b00000001; </pre>
+                <p>Then the SFI has to be bit7..bit3 in P2. So we shift it to left.</p>
+                <p>
+                    Then we add 0b00000100 meaning - we want to &quot;Read all Records from P1 up to
+                    the last&quot;
+                </p>
+<pre>7 6 5 4 3 2 1 0
+
+0 0 0 0 1       	SFI
+          1 0 0         Read all Records from P1 up to the last
+0 0 0 0 1 1 0 0         = 0x0c</pre>
+                <p>in Arduino-C:</p>
+<pre>uint8_t P2 = SFI&lt;&lt;3 | 0b00000100; </pre>
+                <p>I know it looks somehow crazy, but thats the way we do it ;-)</p>
+                <p>Finally we have an APDU like</p>
+<pre>00 b2 01 0c 00</pre>
+                <p>and this was the funny part. Here are the next two APDU of first group:</p>
+<pre>00 b2 02 0c 00
+00 b2 03 0c 00</pre>
+                <p>
+                    Let's check the other groups for training: <br>
+                    second group: 10 01 02 00 ... from 1 to 2 means we should generate two APDUs. Do
+                    the math on your own and you should get:
+                </p>
+<pre>00 b2 01 14 00
+00 b2 02 14 00</pre>
+                <p>out from group 3: 10 04 04 00 ... as mentioned above: we start at 4(!)</p>
+<pre> 00 b2 04 14 00</pre>
+                <p>and one from group 4: 20 01 01 01</p>
+<pre> 00 b2 01 24 00 </pre>
+                <p>
+                    You're still here? Great. Because now we get all the interesting data from
+                    the card wenn we send these APDU to the card.
+                </p>
+<pre>
+
+APDU 00 b2 01 0c 00 
+30 Bytes: 70 1a 57 13 67 00 85 80 49 76 67 91 08 0d 15 12 20 11 00 01 18 81 0f 5f 28 02 00 40 90 00 
+70 READ RECORD Response Message Template (26 Byte)
+57 Track 2 Equivalent Data (19 Byte)
+67 00 85 80 49 76 67 91 08 0D 15 12 20 11 00 01 18 81 0F
+5F28 Issuer Country Code (2 Byte)
+00 40
+
+APDU 00 b2 02 0c 00 
+87 Bytes: 70 53 5f 24 03 15 12 31 5f 25 03 13 02 19 5a 0a 67 00 85 80 49 76 67 91 08 0f 5f 34 01 01 8c 27 9f 02 06 9f 03 06 9f 1a 02 95 05 5f 2a 02 9a 03 9c 01 9f 37 04 9f 35 01 9f 45 02 9f 4c 08 9f 34 03 9f 21 03 9f 7c 14 8d 0c 91 0a 8a 02 95 05 9f 37 04 9f 4c 08 90 00 
+70 READ RECORD Response Message Template (83 Byte)
+5F24 Application Expiration Date (3 Byte)
+15 12 31
+5F25 Application Effective Date (3 Byte)
+13 02 19
+5A Application Primary Account Number (PAN) (10 Byte)
+67 00 85 80 49 76 67 91 08 0F
+5F34 Application Primary Account Number (PAN) Sequence Number (1 Byte)
+01
+8C Card Risk Management Data object List 1 (CDOL1) (39 Byte)
+9F 02 06 9F 03 06 9F 1A 02 95 05 5F 2A 02 9A 03 9C 01 9F 37 04 9F 35 01 9F 45 02 9F 4C 08 9F 34 03 9F 21 03 9F 7C 14
+8D Card Risk Management Data object List 2 (CDOL2) (12 Byte)
+91 0A 8A 02 95 05 9F 37 04 9F 4C 08
+
+APDU 00 b2 03 0c 00 
+33 Bytes: 70 1d 9f 4a 01 82 9f 49 03 9f 37 04 9f 44 01 02 9f 42 02 09 78 5f 30 02 02 01 9f 08 02 00 02 90 00 
+70 READ RECORD Response Message Template (29 Byte)
+9F4A Static Data Authentication Tag List (1 Byte)
+82
+9F49 Dynamic Data Authentication Data Object List (DDOL) (3 Byte)
+9F 37 04
+9F44 Currency Exponent, Application (1 Byte)
+02
+9F42 Currency Code, Application (2 Byte)
+09 78
+5F30 Service Code (2 Byte)
+02 01
+9F08 Application Version Number (2 Byte)
+00 02
+
+APDU 00 b2 01 14 00 
+193 Bytes: 70 81 bc 8f 01 f1 92 04 9b 1a 84 43 90 81 b0 a0 c9 81 52 01 fd e4 b0 0f d9 32 6a c3 f8 44 1c 40 32 a1 cb 20 0d 66 e0 f2 4d e0 0b 4c 48 bf f6 e3 8f 15 64 05 6d 38 0a 47 52 4d 2d 35 1a f1 14 05 40 42 ff 1e 62 e5 89 3d ad dd e9 27 90 6c 67 26 5a 1b 28 b5 5a ed f0 d4 b3 95 60 d3 42 81 33 e7 bf 97 00 c5 73 01 64 43 0e 47 33 17 4d ff f6 b1 bc 82 cc a5 99 a8 91 df d8 33 0e c3 ab 23 e9 7b 4a 2e 5f dc a4 d9 38 4c 52 49 f5 6d a1 d1 2e ba 84 00 44 3e 8c 19 2f f5 00 75 06 21 1d 2b 16 7a d7 be 89 b1 1c fd 2b 67 f6 a0 ee cf 7c f7 2f 99 27 55 8a 6e de 5d 07 59 20 d2 cf 5f f6 ac fe 90 00 
+70 READ RECORD Response Message Template (188 Byte)
+8F Certification Authority Public Key Index (PKI) (1 Byte)
+F1
+92 Issuer Public Key Remainder (4 Byte)
+9B 1A 84 43
+90 Issuer Public Key Certificate (176 Byte)
+A0 C9 81 52 01 FD E4 B0 0F D9 32 6A C3 F8 44 1C 40 32 A1 CB 20 0D 66 E0 F2 4D E0 0B 4C 48 BF F6 E3 8F 15 64 05 6D 38 0A 47 52 4D 2D 35 1A F1 14 05 40 42 FF 1E 62 E5 89 3D AD DD E9 27 90 6C 67 26 5A 1B 28 B5 5A ED F0 D4 B3 95 60 D3 42 81 33 E7 BF 97 00 C5 73 01 64 43 0E 47 33 17 4D FF F6 B1 BC 82 CC A5 99 A8 91 DF D8 33 0E C3 AB 23 E9 7B 4A 2E 5F DC A4 D9 38 4C 52 49 F5 6D A1 D1 2E BA 84 00 44 3E 8C 19 2F F5 00 75 06 21 1D 2B 16 7A D7 BE 89 B1 1C FD 2B 67 F6 A0 EE CF 7C F7 2F 99 27 55 8A 6E DE 5D 07 59 20 D2 CF 5F F6 AC FE
+
+APDU 00 b2 02 14 00 
+16 Bytes: 70 0c 9f 47 03 01 00 01 9f 32 03 01 00 01 90 00 
+70 READ RECORD Response Message Template (12 Byte)
+9F47 Integrated Circuit Card (ICC) Public Key Exponent (3 Byte)
+01 00 01
+9F32 Issuer Public Key Exponent (3 Byte)
+01 00 01
+
+APDU 00 b2 04 14 00 
+198 Bytes: 70 81 c1 9f 46 81 90 6e ad 30 f9 7c e6 57 11 80 15 f1 2a 67 c7 43 e7 de 01 4f 41 03 ff 73 67 59 cc 1c 2b 25 b4 ff 27 fc 26 4d c9 a2 fc 35 b9 bc 92 5a 5b 7c 07 81 4f 61 f8 cc 8e 32 3d 3d 8a 4b 25 8d 3c 5e c4 f3 7b a5 f0 f2 7b bb 46 60 73 4c fa de cb d4 96 6f 81 b9 45 57 4d 96 67 d5 46 96 99 55 72 a7 5d d3 57 f0 15 26 74 cf 87 bf a7 dd 05 48 a9 ee 98 45 3e da bf 3a d2 5e 6b fa ac 35 10 a7 ab 04 4b c7 6c d7 84 b0 25 ca 24 dc 31 35 42 e2 e7 f2 df cf a3 9f 48 2a 44 33 ac e8 83 29 bf 28 17 5c 44 58 68 5b 89 67 32 59 b8 d6 eb 0b a4 69 69 5b f5 92 e5 a8 72 6a b3 82 42 42 48 ef 7d 21 1a b1 90 00 
+70 READ RECORD Response Message Template (193 Byte)
+9F46 Integrated Circuit Card (ICC) Public Key Certificate (144 Byte)
+6E AD 30 F9 7C E6 57 11 80 15 F1 2A 67 C7 43 E7 DE 01 4F 41 03 FF 73 67 59 CC 1C 2B 25 B4 FF 27 FC 26 4D C9 A2 FC 35 B9 BC 92 5A 5B 7C 07 81 4F 61 F8 CC 8E 32 3D 3D 8A 4B 25 8D 3C 5E C4 F3 7B A5 F0 F2 7B BB 46 60 73 4C FA DE CB D4 96 6F 81 B9 45 57 4D 96 67 D5 46 96 99 55 72 A7 5D D3 57 F0 15 26 74 CF 87 BF A7 DD 05 48 A9 EE 98 45 3E DA BF 3A D2 5E 6B FA AC 35 10 A7 AB 04 4B C7 6C D7 84 B0 25 CA 24 DC 31 35 42 E2 E7 F2 DF CF A3
+9F48 Integrated Circuit Card (ICC) Public Key Remainder (42 Byte)
+44 33 AC E8 83 29 BF 28 17 5C 44 58 68 5B 89 67 32 59 B8 D6 EB 0B A4 69 69 5B F5 92 E5 A8 72 6A B3 82 42 42 48 EF 7D 21 1A B1
+
+APDU 00 b2 01 24 00 
+47 Bytes: 70 2b 8e 0c 00 00 00 00 00 00 00 00 02 03 1f 03 9f 07 02 3d 00 9f 0d 05 b4 50 84 80 00 9f 0e 05 00 00 00 00 00 9f 0f 05 b4 70 84 80 00 90 00 
+70 READ RECORD Response Message Template (43 Byte)
+8E Cardholder Verification Method (CVM) List (12 Byte)
+00 00 00 00 00 00 00 00 02 03 1F 03
+9F07 Application Usage Control (2 Byte)
+3D 00
+9F0D Issuer Action Code - Default (5 Byte)
+B4 50 84 80 00
+9F0E Issuer Action Code - Denial (5 Byte)
+00 00 00 00 00
+9F0F Issuer Action Code - Online (5 Byte)
+B4 70 84 80 00
+</pre>
+                <p>&nbsp;</p>
+                <p>
+                    At this point I will end this tutorial. Basically you are now able to read
+                    most of the credit card data. You could even generate an ARQC in the next step.
+                    When dealing with card data you should follow the rules of PCI-DSS. For Example
+                    to mask the PAN on printouts for data security reasons. You see that I don't
+                    mask the PAN in my examples, however you should know that this is a not working
+                    PAN as I'm using a test card.
+                </p>
+                <hr />
+
+                <h1>Links</h1>
+                <ul>
+                    <li>
+                        Lot of
+                        <a target="_blank" href="https://www.eftlab.co.uk/index.php/site-map/knowledge-base/211-emv-aid-rid-pix">
+                            EMV AIDs
+                        </a>
+                    </li>
+                    <li>
+                        Ultimative <a target="_blank" href="http://www.emvlab.org/tlvutils/">
+                            BER-TLV parser
+                        </a>
+                    </li>
+                    <li>
+                        List of
+                        <a target="_blank" href="https://www.eftlab.co.uk/index.php/site-map/knowledge-base/145-emv-nfc-tags">
+                            EMV NFC Tags
+                        </a>
+                    </li>
+                </ul>
+                <hr />
+
+                <h2>Protokoll</h2>
+
+                <p class="small">
+                    erstellt: 2017-03-04 | Stand:
+                    <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y-%m-%d" startspan -->2017-03-12<!--webbot bot="Timestamp" i-checksum="12211" endspan -->
+                </p>
+
+
+
+
+            </div>					<!-- von content  -->
+
+            <div class="clearingdiv">&nbsp;</div>
+        </div>					<!-- von wrap  -->
+    </div>					<!-- von container     -->
+    <!--webbot bot="Include" U-Include="z intern/nav_unten.htm" TAG="BODY" startspan -->
+
+    <div id="footer">
+        © 2007-2015
+        <a target="_blank" href="http://werner.rothschopf.net/">ROWEX</a>
+    </div>
+
+    <!--webbot bot="Include" i-checksum="35061" endspan -->
+
+</body>
+
+</html>

@@ -1,0 +1,1868 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+    <TITLE>BER</TITLE>
+    <META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.2  (Win32)">
+    <META NAME="AUTHOR" CONTENT="Emmanuel Delahaye">
+    <META NAME="CREATED" CONTENT="20041213;11014448">
+    <META NAME="CHANGEDBY" CONTENT="Emmanuel Delahaye">
+    <META NAME="CHANGED" CONTENT="20041213;11590226">
+    <META NAME="CLASSIFICATION" CONTENT="Encodage des donn&eacute;es BER">
+    <META NAME="DESCRIPTION" CONTENT="Description du format de codage des donn&eacute;es BER .
+Utilis&eacute; en SNMP.
+">
+    <META NAME="KEYWORDS" CONTENT="r&eacute;seaux codage donn&eacute;es BER basic encoding rules">
+    <STYLE>
+
+        <!--
+        @page {
+            size: 21cm 29.7cm
+        }
+
+        TD P.western {
+            font-family: "Arial", sans-serif
+        }
+
+        H1 {
+            color: #333366
+        }
+
+            H1.western {
+                font-family: "Verdana", sans-serif;
+                font-size: 16pt
+            }
+
+        P.western {
+            font-family: "Arial", sans-serif
+        }
+
+        H2 {
+            color: #333366
+        }
+
+            H2.western {
+                font-family: "Verdana", sans-serif;
+                font-size: 14pt;
+                font-style: italic
+            }
+
+            H2.cjk {
+                font-family: "HG Mincho Light J";
+                font-size: 14pt;
+                font-style: italic
+            }
+
+            H2.ctl {
+                font-family: "Arial Unicode MS";
+                font-size: 14pt;
+                font-style: italic
+            }
+
+        H3 {
+            color: #333366
+        }
+
+            H3.western {
+                font-family: "Verdana", sans-serif;
+                font-size: 12pt
+            }
+
+            H3.cjk {
+                font-family: "HG Mincho Light J"
+            }
+
+            H3.ctl {
+                font-family: "Arial Unicode MS"
+            }
+
+        P.sdfootnote {
+            margin-left: 0.5cm;
+            text-indent: -0.5cm;
+            margin-bottom: 0cm;
+            font-size: 10pt
+        }
+
+        H4 {
+            color: #333366
+        }
+
+            H4.western {
+                font-family: "Verdana", sans-serif;
+                font-style: italic
+            }
+
+        A.sdfootnoteanc {
+            font-size: 57%
+        }
+        -->
+    </STYLE>
+</HEAD>
+<BODY LANG="fr-FR" DIR="LTR">
+    <P CLASS="western" STYLE="margin-top: 0.42cm; page-break-before: always; page-break-after: avoid">
+        <FONT COLOR="#333366">
+            <FONT FACE="Verdana, sans-serif">
+                <FONT SIZE=5>
+                    <B>
+                        BER
+                        Basic Encoding Rules
+                    </B>
+                </FONT>
+            </FONT>
+        </FONT>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        L'encodage des donn&eacute;es
+        ASN-1 est r&eacute;alis&eacute; selon l'algorithme BER. Il est d&eacute;crit
+        en d&eacute;tails dans la recommandation UIT-T <SPAN LANG="fr-CA">X.209.</SPAN>
+    </P>
+    <H1 CLASS="western">Convention pour la notation des bits.</H1>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        Les bits de chaque
+        octets sont num&eacute;rot&eacute;s de 8 &agrave; 1 avec 8 = MSB et 1
+        = LSB
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <TABLE WIDTH=138 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+        <COL WIDTH=8>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=8>
+        <THEAD>
+            <TR VALIGN=TOP>
+                <TD WIDTH=8>
+                    <P CLASS="western" ALIGN=CENTER><FONT SIZE=2>8</FONT></P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western" ALIGN=CENTER><FONT SIZE=2>7</FONT></P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western" ALIGN=CENTER><FONT SIZE=2>6</FONT></P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western" ALIGN=CENTER><FONT SIZE=2>5</FONT></P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western" ALIGN=CENTER><FONT SIZE=2>4</FONT></P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western" ALIGN=CENTER><FONT SIZE=2>3</FONT></P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western" ALIGN=CENTER><FONT SIZE=2>2</FONT></P>
+                </TD>
+                <TD WIDTH=8>
+                    <P CLASS="western" ALIGN=CENTER><FONT SIZE=2>1</FONT></P>
+                </TD>
+            </TR>
+        </THEAD>
+    </TABLE>
+    <H1 CLASS="western">Structure de base</H1>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        La structure repose sur
+        le principe de codage TLV (Type, Longueur, Donn&eacute;e ou <I>
+            Type,
+            Length, Data
+        </I>). La recommandation UIT-T <SPAN LANG="fr-CA">X.209</SPAN>
+        utilise la terminologie Idendificateur, Longueur, Contenu ou encore
+        <I>Identifier, Length, Content</I>.
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <TABLE WIDTH=230 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+        <COL WIDTH=78>
+        <COL WIDTH=59>
+        <COL WIDTH=68>
+        <THEAD>
+            <TR VALIGN=TOP>
+                <TD WIDTH=78>
+                    <P CLASS="western" ALIGN=CENTER>Identifier</P>
+                </TD>
+                <TD WIDTH=59>
+                    <P CLASS="western" ALIGN=CENTER>Length</P>
+                </TD>
+                <TD WIDTH=68>
+                    <P CLASS="western" ALIGN=CENTER>Content</P>
+                </TD>
+            </TR>
+        </THEAD>
+    </TABLE>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        Le champ Length indique
+        le nombre d'octets du champ Content
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        Il existe une
+        alternative qui utilise un marqueur de fin :
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <TABLE WIDTH=378 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+        <COL WIDTH=78>
+        <COL WIDTH=104>
+        <COL WIDTH=68>
+        <COL WIDTH=95>
+        <THEAD>
+            <TR VALIGN=TOP>
+                <TD WIDTH=78>
+                    <P CLASS="western" ALIGN=CENTER>Identifier</P>
+                </TD>
+                <TD WIDTH=104>
+                    <P CLASS="western" ALIGN=CENTER>Length</P>
+                    <P CLASS="western" ALIGN=CENTER>'Terminated'</P>
+                </TD>
+                <TD WIDTH=68>
+                    <P CLASS="western" ALIGN=CENTER>Content</P>
+                </TD>
+                <TD WIDTH=95>
+                    <P CLASS="western" ALIGN=CENTER>End marker</P>
+                </TD>
+            </TR>
+        </THEAD>
+    </TABLE>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <TABLE WIDTH=640 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+        <COL WIDTH=167>
+        <COL WIDTH=124>
+        <COL WIDTH=122>
+        <COL WIDTH=93>
+        <COL WIDTH=93>
+        <THEAD>
+            <TR VALIGN=TOP>
+                <TD COLSPAN=3 WIDTH=428>
+                    <P CLASS="western" ALIGN=CENTER>Identifier</P>
+                </TD>
+                <TD WIDTH=93>
+                    <P CLASS="western" ALIGN=CENTER>Length</P>
+                </TD>
+                <TD WIDTH=93>
+                    <P CLASS="western" ALIGN=CENTER>Content</P>
+                </TD>
+            </TR>
+        </THEAD>
+        <TBODY>
+            <TR VALIGN=TOP>
+                <TD COLSPAN=3 WIDTH=428>
+                    <P CLASS="western" ALIGN=CENTER>&gt;=1 octet</P>
+                </TD>
+                <TD WIDTH=93>
+                    <P CLASS="western" ALIGN=CENTER>&gt;= 1 octet</P>
+                </TD>
+                <TD WIDTH=93>
+                    <P CLASS="western" ALIGN=CENTER>&gt;= 1 octet</P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=167>
+                    <P CLASS="western" ALIGN=CENTER>B8-7</P>
+                </TD>
+                <TD WIDTH=124>
+                    <P CLASS="western" ALIGN=CENTER>B6</P>
+                </TD>
+                <TD WIDTH=122>
+                    <P CLASS="western" ALIGN=CENTER>B5-1</P>
+                </TD>
+                <TD ROWSPAN=5 WIDTH=93>
+                    <P CLASS="western" ALIGN=CENTER>
+                        <BR>
+                    </P>
+                </TD>
+                <TD ROWSPAN=5 WIDTH=93>
+                    <P CLASS="western" ALIGN=CENTER>
+                        <BR>
+                    </P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=167>
+                    <P CLASS="western" ALIGN=CENTER>Class</P>
+                </TD>
+                <TD WIDTH=124>
+                    <P CLASS="western" ALIGN=CENTER>Form</P>
+                </TD>
+                <TD ROWSPAN=4 WIDTH=122>
+                    <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0cm">
+                        Tag
+                        number
+                    </P>
+                    <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0cm">
+                        0 0000-1
+                        1110
+                    </P>
+                    <P CLASS="western" ALIGN=LEFT>(0-30)</P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=167>
+                    <P CLASS="western" ALIGN=LEFT>00=Universal</P>
+                </TD>
+                <TD WIDTH=124>
+                    <P CLASS="western" ALIGN=LEFT>0=Primitive</P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=167>
+                    <P CLASS="western" ALIGN=LEFT>01=Application</P>
+                </TD>
+                <TD WIDTH=124>
+                    <P CLASS="western" ALIGN=LEFT>1=Constructed</P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=167>
+                    <TABLE WIDTH=167 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+                        <COL WIDTH=158>
+                        <TR>
+                            <TD WIDTH=158 VALIGN=TOP>
+                                <P CLASS="western" ALIGN=LEFT>10=Context-specific</P>
+                            </TD>
+                        </TR>
+                        <TR>
+                            <TD WIDTH=158 VALIGN=TOP>
+                                <P CLASS="western" ALIGN=LEFT>11=Private</P>
+                            </TD>
+                        </TR>
+                    </TABLE>
+                </TD>
+                <TD WIDTH=124>
+                    <P CLASS="western" ALIGN=CENTER>
+                        <BR>
+                    </P>
+                </TD>
+            </TR>
+        </TBODY>
+    </TABLE>
+    <H1 CLASS="western">Types de base</H1>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        Les types communs
+        (universal) sont les suivants
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <TABLE WIDTH=215 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+        <COL WIDTH=39>
+        <COL WIDTH=64>
+        <COL WIDTH=87>
+        <THEAD>
+            <TR>
+                <TD ROWSPAN=2 WIDTH=39 VALIGN=TOP>
+                    <P CLASS="western" STYLE="margin-bottom: 0cm">Form</P>
+                    <P CLASS="western">(<B>F</B>)</P>
+                </TD>
+                <TD WIDTH=64 VALIGN=BOTTOM SDVAL="0" SDNUM="1036;">
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=87 VALIGN=TOP>
+                    <P CLASS="western" ALIGN=CENTER>1</P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=64>
+                    <P CLASS="western" ALIGN=CENTER>Primitive</P>
+                </TD>
+                <TD WIDTH=87>
+                    <P CLASS="western" ALIGN=CENTER>Constructed</P>
+                </TD>
+            </TR>
+        </THEAD>
+    </TABLE>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <TABLE WIDTH=559 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+        <COL WIDTH=61>
+        <COL WIDTH=163>
+        <COL WIDTH=88>
+        <COL WIDTH=118>
+        <COL WIDTH=88>
+        <THEAD>
+            <TR VALIGN=TOP>
+                <TD ROWSPAN=2 WIDTH=61>
+                    <P CLASS="western">Class</P>
+                </TD>
+                <TD WIDTH=163>
+                    <P CLASS="western" ALIGN=CENTER>00 F</P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western" ALIGN=CENTER>01 0</P>
+                </TD>
+                <TD WIDTH=118>
+                    <P CLASS="western" ALIGN=CENTER>10 0</P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western" ALIGN=CENTER>11 0</P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=163>
+                    <P CLASS="western">Universal</P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">Application</P>
+                </TD>
+                <TD WIDTH=118>
+                    <P CLASS="western">Context-Specific</P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">Private</P>
+                </TD>
+            </TR>
+        </THEAD>
+        <TBODY>
+            <TR VALIGN=TOP>
+                <TD WIDTH=61>
+                    <P CLASS="western">Indicator</P>
+                </TD>
+                <TD WIDTH=163>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+                <TD WIDTH=118>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=61>
+                    <P CLASS="western">0 0000</P>
+                </TD>
+                <TD WIDTH=163>
+                    <P CLASS="western">N.U.</P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+                <TD WIDTH=118>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=61>
+                    <P CLASS="western">0 0001</P>
+                </TD>
+                <TD WIDTH=163>
+                    <P CLASS="western">BOOLEAN(1)</P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+                <TD WIDTH=118>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=61>
+                    <P CLASS="western">0 0010</P>
+                </TD>
+                <TD WIDTH=163>
+                    <P CLASS="western">INTEGER(2)</P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+                <TD WIDTH=118>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=61>
+                    <P CLASS="western">0 0011</P>
+                </TD>
+                <TD WIDTH=163>
+                    <P CLASS="western">BITSTRING(3)</P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+                <TD WIDTH=118>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=61>
+                    <P CLASS="western">0 0100</P>
+                </TD>
+                <TD WIDTH=163>
+                    <P CLASS="western">OCTETSTRING(4)</P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+                <TD WIDTH=118>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=61>
+                    <P CLASS="western">0 0101</P>
+                </TD>
+                <TD WIDTH=163>
+                    <P CLASS="western">NULL(5)</P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+                <TD WIDTH=118>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=61>
+                    <P CLASS="western">0 0110</P>
+                </TD>
+                <TD WIDTH=163>
+                    <P CLASS="western">OID(6)</P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+                <TD WIDTH=118>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=61>
+                    <P CLASS="western">x 1111</P>
+                </TD>
+                <TD WIDTH=163>
+                    <P CLASS="western">Type &eacute;tendu</P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">Type &eacute;tendu</P>
+                </TD>
+                <TD WIDTH=118>
+                    <P CLASS="western">Type &eacute;tendu</P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">Type &eacute;tendu</P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=61>
+                    <P CLASS="western">1 0000</P>
+                </TD>
+                <TD WIDTH=163>
+                    <P CLASS="western">SEQUENCE(30) (F=1)</P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+                <TD WIDTH=118>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+                <TD WIDTH=88>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+            </TR>
+        </TBODY>
+    </TABLE>
+    <H2 CLASS="western">Champ Type</H2>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        Par d&eacute;faut, le
+        tag du type est cod&eacute; sur 5 bits (0-30). Si on doit utiliser
+        une valeur de tag sup&eacute;rieure &agrave; 30, on utilise le codage
+        de type &eacute;tendu:
+    </P>
+    <UL>
+        <LI>
+            <P CLASS="western" STYLE="margin-bottom: 0cm">
+                Premier octet :
+                Les champs Class and Form, sont conformes &agrave; la demande. Le
+                champ Tag est forc&eacute; &agrave; 31 (1 1111 soit 0x1F)
+            </P>
+    </UL>
+    <UL>
+        <LI>
+            <P CLASS="western" STYLE="margin-bottom: 0cm">
+                Octets suivants :
+                Ils encodent le num&eacute;ro du tag de la fa&ccedil;on suivante :
+            </P>
+    </UL>
+    <UL>
+        <LI>
+            <P CLASS="western" STYLE="margin-bottom: 0cm">
+                Le bit 8 est &agrave;
+                1, sauf pour le dernier octet, qui est &agrave; 0.
+            </P>
+    </UL>
+    <UL>
+        <LI>
+            <P CLASS="western" STYLE="margin-bottom: 0cm">
+                Les bits 7 a 1 de
+                chaque octets supportent la valeur num&eacute;rique du tag cadr&eacute;e
+                &agrave; droite (bit 1 du dernier octet).
+            </P>
+    </UL>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        Exemple : soit &agrave;
+        encoder le type &laquo;&nbsp;Appplication 293&nbsp;&raquo;
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">293 = $125</P>
+    <TABLE WIDTH=418 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+        <COL WIDTH=35>
+        <COL WIDTH=35>
+        <COL WIDTH=48>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=8>
+        <THEAD>
+            <TR VALIGN=TOP>
+                <TD WIDTH=35>
+                    <P CLASS="western">Class</P>
+                </TD>
+                <TD WIDTH=35>
+                    <P CLASS="western">Form</P>
+                </TD>
+                <TD WIDTH=48>
+                    <P CLASS="western">Tag</P>
+                </TD>
+                <TD WIDTH=9 BGCOLOR="#808080">
+                    <P CLASS="western">8</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">7</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">6</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">5</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">4</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">3</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">2</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">1</P>
+                </TD>
+                <TD WIDTH=9 BGCOLOR="#808080">
+                    <P CLASS="western">8</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">7</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">6</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">5</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">4</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">3</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">2</P>
+                </TD>
+                <TD WIDTH=8>
+                    <P CLASS="western">1</P>
+                </TD>
+            </TR>
+        </THEAD>
+        <TBODY>
+            <TR VALIGN=TOP>
+                <TD WIDTH=35>
+                    <P CLASS="western">01</P>
+                </TD>
+                <TD WIDTH=35>
+                    <P CLASS="western">1</P>
+                </TD>
+                <TD WIDTH=48>
+                    <P CLASS="western">1 1111</P>
+                </TD>
+                <TD WIDTH=9 BGCOLOR="#808080">
+                    <P CLASS="western">1</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">1</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=9 BGCOLOR="#808080">
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">1</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">1</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=8>
+                    <P CLASS="western">1</P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD COLSPAN=3 WIDTH=133>
+                    <P CLASS="western">7F</P>
+                </TD>
+                <TD COLSPAN=8 WIDTH=130>
+                    <P CLASS="western">82</P>
+                </TD>
+                <TD COLSPAN=8 WIDTH=129>
+                    <P CLASS="western">25</P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD COLSPAN=3 WIDTH=133>
+                    <P CLASS="western">Ent&ecirc;te</P>
+                </TD>
+                <TD COLSPAN=8 WIDTH=130>
+                    <P CLASS="western">Suite</P>
+                </TD>
+                <TD COLSPAN=8 WIDTH=129>
+                    <P CLASS="western">Dernier</P>
+                </TD>
+            </TR>
+        </TBODY>
+    </TABLE>
+    <H2 CLASS="western">Champ Longueur</H2>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        Il existe 2 types de
+        longueurs:
+    </P>
+    <UL>
+        <LI>
+            <P CLASS="western" STYLE="margin-bottom: 0cm">
+                Longueur d&eacute;finie
+                (Obligatoire avec les 'Primitive')
+            </P>
+        <LI>
+            <P CLASS="western" STYLE="margin-bottom: 0cm">
+                Longueur non
+                d&eacute;finie
+            </P>
+    </UL>
+    <H3 CLASS="western">Longueur d&eacute;finie</H3>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        La longueur est cod&eacute;e
+        dans un ou plusieurs octets. Le format utilisant 1 octet est appel&eacute;
+        Format Court (<I>Short Form</I>), et le format utilisant plus d'un
+        octet est appel&eacute; Format Long (<I>Long Form</I>)
+    </P>
+    <H4 CLASS="western">Format court</H4>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        Ce format utilise un
+        octet unique.
+    </P>
+    <UL>
+        <LI>
+            <P CLASS="western" STYLE="margin-bottom: 0cm">
+                Le bit 8 est forc&eacute;
+                &agrave; 0.
+            </P>
+        <LI>
+            <P CLASS="western" STYLE="margin-bottom: 0cm">
+                La longueur est
+                cod&eacute;e dans les bits 7 &agrave; 1 (0 &agrave; 127)
+            </P>
+    </UL>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">Exemple : L=16 ($10)</P>
+    <TABLE WIDTH=138 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+        <COL WIDTH=8>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=8>
+        <THEAD>
+            <TR VALIGN=TOP>
+                <TD WIDTH=8 BGCOLOR="#808080">
+                    <P CLASS="western">8</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">7</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">6</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">5</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">4</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">3</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">2</P>
+                </TD>
+                <TD WIDTH=8>
+                    <P CLASS="western">1</P>
+                </TD>
+            </TR>
+        </THEAD>
+        <TBODY>
+            <TR VALIGN=TOP>
+                <TD WIDTH=8 BGCOLOR="#808080">
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">1</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=8>
+                    <P CLASS="western">0</P>
+                </TD>
+            </TR>
+            <TR>
+                <TD COLSPAN=8 WIDTH=128 VALIGN=TOP>
+                    <P CLASS="western">10</P>
+                </TD>
+            </TR>
+        </TBODY>
+    </TABLE>
+    <H4 CLASS="western">Format long</H4>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        Ce format utilise un
+        octet d'ent&ecirc;te et des octets suivants.
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        L'octet d'ent&ecirc;te,
+        est compos&eacute; de la fa&ccedil;on suivante
+    </P>
+    <UL>
+        <LI>
+            <P CLASS="western" STYLE="margin-bottom: 0cm">
+                Le bit 8 est forc&eacute;
+                &agrave; 1
+            </P>
+        <LI>
+            <P CLASS="western" STYLE="margin-bottom: 0cm">
+                Les bits 7 &agrave;
+                1 supportent une valeur num&eacute;rique (1-126) rep&eacute;sentant
+                la taille du param&egrave;tre 'longueur'<A CLASS="sdfootnoteanc" NAME="sdfootnote1anc" HREF="#sdfootnote1sym"><SUP>1</SUP></A>.
+            </P>
+        <LI>
+            <P CLASS="western" STYLE="margin-bottom: 0cm">
+                La valeur 11111111
+                est interdite<A CLASS="sdfootnoteanc" NAME="sdfootnote2anc" HREF="#sdfootnote2sym"><SUP>2</SUP></A>.
+            </P>
+    </UL>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        Les octets suivants
+        sont cod&eacute;s ainsi
+    </P>
+    <UL>
+        <LI>
+            <P CLASS="western" STYLE="margin-bottom: 0cm">
+                Le bit 8 est forc&eacute;
+                &agrave; 1 (pas le dernier) ou &agrave; 0 (le dernier)
+            </P>
+        <LI>
+            <P CLASS="western" STYLE="margin-bottom: 0cm">
+                Les bits 7 &agrave;
+                1 supportent une valeur num&eacute;rique (0-127) encodant le
+                param&egrave;tre 'longueur'
+            </P>
+    </UL>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">Exemple L=$C9 (201)</P>
+    <TABLE WIDTH=490 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+        <COL WIDTH=12>
+        <COL WIDTH=13>
+        <COL WIDTH=13>
+        <COL WIDTH=13>
+        <COL WIDTH=13>
+        <COL WIDTH=13>
+        <COL WIDTH=13>
+        <COL WIDTH=14>
+        <COL WIDTH=12>
+        <COL WIDTH=12>
+        <COL WIDTH=12>
+        <COL WIDTH=12>
+        <COL WIDTH=12>
+        <COL WIDTH=12>
+        <COL WIDTH=12>
+        <COL WIDTH=12>
+        <COL WIDTH=0>
+        <COL WIDTH=9>
+        <COL WIDTH=12>
+        <COL WIDTH=12>
+        <COL WIDTH=12>
+        <COL WIDTH=12>
+        <COL WIDTH=12>
+        <COL WIDTH=12>
+        <COL WIDTH=14>
+        <THEAD>
+            <TR VALIGN=TOP>
+                <TD WIDTH=12 BGCOLOR="#808080">
+                    <P CLASS="western">8</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western">7</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western">6</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western">5</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western">4</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western">3</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western">2</P>
+                </TD>
+                <TD WIDTH=14>
+                    <P CLASS="western">1</P>
+                </TD>
+                <TD WIDTH=12 BGCOLOR="#808080">
+                    <P CLASS="western">8</P>
+                </TD>
+                <TD WIDTH=12>
+                    <P CLASS="western">7</P>
+                </TD>
+                <TD WIDTH=12>
+                    <P CLASS="western">6</P>
+                </TD>
+                <TD WIDTH=12>
+                    <P CLASS="western">5</P>
+                </TD>
+                <TD WIDTH=12>
+                    <P CLASS="western">4</P>
+                </TD>
+                <TD WIDTH=12>
+                    <P CLASS="western">3</P>
+                </TD>
+                <TD WIDTH=12>
+                    <P CLASS="western">2</P>
+                </TD>
+                <TD WIDTH=12>
+                    <P CLASS="western">1</P>
+                </TD>
+                <TD COLSPAN=2 WIDTH=12 BGCOLOR="#808080">
+                    <P CLASS="western">8</P>
+                </TD>
+                <TD WIDTH=12>
+                    <P CLASS="western">7</P>
+                </TD>
+                <TD WIDTH=12>
+                    <P CLASS="western">6</P>
+                </TD>
+                <TD WIDTH=12>
+                    <P CLASS="western">5</P>
+                </TD>
+                <TD WIDTH=12>
+                    <P CLASS="western">4</P>
+                </TD>
+                <TD WIDTH=12>
+                    <P CLASS="western">3</P>
+                </TD>
+                <TD WIDTH=12>
+                    <P CLASS="western">2</P>
+                </TD>
+                <TD WIDTH=14>
+                    <P CLASS="western">1</P>
+                </TD>
+            </TR>
+        </THEAD>
+        <TBODY>
+            <TR>
+                <TD WIDTH=12 VALIGN=TOP BGCOLOR="#808080">
+                    <P CLASS="western">1</P>
+                </TD>
+                <TD WIDTH=13 VALIGN=TOP>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=13 VALIGN=TOP>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=13 VALIGN=TOP>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=13 VALIGN=TOP>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=13 VALIGN=TOP>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=13 VALIGN=TOP>
+                    <P CLASS="western">1</P>
+                </TD>
+                <TD WIDTH=14 VALIGN=TOP>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=12 VALIGN=BOTTOM BGCOLOR="#808080" SDVAL="1" SDNUM="1036;">
+                    <P CLASS="western" ALIGN=RIGHT>1</P>
+                </TD>
+                <TD WIDTH=12 VALIGN=TOP>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=12 VALIGN=BOTTOM SDVAL="0" SDNUM="1036;">
+                    <P CLASS="western" ALIGN=RIGHT>0</P>
+                </TD>
+                <TD WIDTH=12 VALIGN=TOP>
+                    <P CLASS="western">0</P>
+                </TD>
+                <TD WIDTH=12 VALIGN=BOTTOM SDVAL="0" SDNUM="1036;">
+                    <P CLASS="western" ALIGN=RIGHT>0</P>
+                </TD>
+                <TD WIDTH=12 VALIGN=TOP>
+                    <P CLASS="western">1</P>
+                </TD>
+                <TD WIDTH=12 VALIGN=TOP>
+                    <P CLASS="western">1</P>
+                </TD>
+                <TD WIDTH=12 VALIGN=BOTTOM SDVAL="0" SDNUM="1036;">
+                    <P CLASS="western" ALIGN=RIGHT>0</P>
+                </TD>
+                <TD COLSPAN=2 WIDTH=12 VALIGN=BOTTOM BGCOLOR="#808080" SDVAL="0" SDNUM="1036;">
+                    <P CLASS="western" ALIGN=RIGHT>0</P>
+                </TD>
+                <TD WIDTH=12 VALIGN=BOTTOM SDVAL="0" SDNUM="1036;">
+                    <P CLASS="western" ALIGN=RIGHT>0</P>
+                </TD>
+                <TD WIDTH=12 VALIGN=BOTTOM SDVAL="0" SDNUM="1036;">
+                    <P CLASS="western" ALIGN=RIGHT>0</P>
+                </TD>
+                <TD WIDTH=12 VALIGN=BOTTOM SDVAL="0" SDNUM="1036;">
+                    <P CLASS="western" ALIGN=RIGHT>0</P>
+                </TD>
+                <TD WIDTH=12 VALIGN=BOTTOM SDVAL="1" SDNUM="1036;">
+                    <P CLASS="western" ALIGN=RIGHT>1</P>
+                </TD>
+                <TD WIDTH=12 VALIGN=BOTTOM SDVAL="0" SDNUM="1036;">
+                    <P CLASS="western" ALIGN=RIGHT>0</P>
+                </TD>
+                <TD WIDTH=12 VALIGN=BOTTOM SDVAL="0" SDNUM="1036;">
+                    <P CLASS="western" ALIGN=RIGHT>0</P>
+                </TD>
+                <TD WIDTH=14 VALIGN=BOTTOM SDVAL="1" SDNUM="1036;">
+                    <P CLASS="western" ALIGN=RIGHT>1</P>
+                </TD>
+            </TR>
+            <TR VALIGN=BOTTOM>
+                <TD COLSPAN=8 WIDTH=163 SDVAL="82" SDNUM="1036;">
+                    <P CLASS="western" ALIGN=CENTER>82</P>
+                </TD>
+                <TD COLSPAN=9 WIDTH=152 SDVAL="86" SDNUM="1036;">
+                    <P CLASS="western" ALIGN=CENTER>86</P>
+                </TD>
+                <TD COLSPAN=8 WIDTH=149 SDVAL="9" SDNUM="1036;">
+                    <P CLASS="western" ALIGN=CENTER>9</P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD COLSPAN=8 WIDTH=163>
+                    <P CLASS="western">1 = Extension</P>
+                </TD>
+                <TD COLSPAN=9 WIDTH=152>
+                    <P CLASS="western">1 = Extension</P>
+                </TD>
+                <TD COLSPAN=8 WIDTH=149>
+                    <P CLASS="western">0 = Dernier</P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD COLSPAN=8 WIDTH=163>
+                    <P CLASS="western">000 0010 (2) = 2 octets</P>
+                </TD>
+                <TD COLSPAN=9 WIDTH=152>
+                    <P CLASS="western">
+                        000 0110
+                    </P>
+                </TD>
+                <TD COLSPAN=8 WIDTH=149>
+                    <P CLASS="western">000 1001</P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD COLSPAN=8 WIDTH=163>
+                    <P CLASS="western">
+                        <BR>
+                    </P>
+                </TD>
+                <TD COLSPAN=17 WIDTH=309>
+                    <P CLASS="western">00 0011 0000 1001 = C9</P>
+                </TD>
+            </TR>
+        </TBODY>
+    </TABLE>
+    <H3 CLASS="western">Longueur non d&eacute;finie</H3>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        Dans ce cas, le champ
+        longueur est unique et vaut [80],
+    </P>
+    <TABLE WIDTH=138 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+        <COL WIDTH=8>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=9>
+        <COL WIDTH=8>
+        <THEAD>
+            <TR VALIGN=TOP>
+                <TD WIDTH=8 BGCOLOR="#808080">
+                    <P CLASS="western" ALIGN=CENTER>8</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western" ALIGN=CENTER>7</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western" ALIGN=CENTER>6</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western" ALIGN=CENTER>5</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western" ALIGN=CENTER>4</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western" ALIGN=CENTER>3</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western" ALIGN=CENTER>2</P>
+                </TD>
+                <TD WIDTH=8>
+                    <P CLASS="western" ALIGN=CENTER>1</P>
+                </TD>
+            </TR>
+        </THEAD>
+        <TBODY>
+            <TR VALIGN=TOP>
+                <TD WIDTH=8 BGCOLOR="#808080">
+                    <P CLASS="western" ALIGN=CENTER>1</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=9>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=8>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+            </TR>
+            <TR>
+                <TD COLSPAN=8 WIDTH=128 VALIGN=TOP>
+                    <P CLASS="western" ALIGN=CENTER>80</P>
+                </TD>
+            </TR>
+        </TBODY>
+    </TABLE>
+    <H2 CLASS="western">Champ contenu (donn&eacute;es)</H2>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        Ce champ peut contenir
+        0, 1 ou plus d'octets. Les donn&eacute;ees sont celles d&eacute;finies
+        par la sp&eacute;cifications ASN-1.
+    </P>
+    <H2 CLASS="western">Marqueur de fin</H2>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        Le marqueur de fin de
+        contenu est une s&eacute;quence [00 00].
+    </P>
+    <TABLE WIDTH=331 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+        <COL WIDTH=12>
+        <COL WIDTH=13>
+        <COL WIDTH=13>
+        <COL WIDTH=13>
+        <COL WIDTH=13>
+        <COL WIDTH=13>
+        <COL WIDTH=13>
+        <COL WIDTH=13>
+        <COL WIDTH=13>
+        <COL WIDTH=13>
+        <COL WIDTH=13>
+        <COL WIDTH=13>
+        <COL WIDTH=13>
+        <COL WIDTH=13>
+        <COL WIDTH=13>
+        <COL WIDTH=13>
+        <THEAD>
+            <TR VALIGN=TOP>
+                <TD WIDTH=12>
+                    <P CLASS="western" ALIGN=CENTER>8</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>7</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>6</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>5</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>4</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>3</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>2</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>1</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>8</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>7</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>6</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>5</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>4</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>3</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>2</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>1</P>
+                </TD>
+            </TR>
+        </THEAD>
+        <TBODY>
+            <TR VALIGN=TOP>
+                <TD WIDTH=12>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+                <TD WIDTH=13>
+                    <P CLASS="western" ALIGN=CENTER>0</P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD COLSPAN=8 WIDTH=156>
+                    <P CLASS="western" ALIGN=CENTER>00</P>
+                </TD>
+                <TD COLSPAN=8 WIDTH=157>
+                    <P CLASS="western" ALIGN=CENTER>00</P>
+                </TD>
+            </TR>
+        </TBODY>
+    </TABLE>
+    <H1 CLASS="western">Encodage de types particuliers</H1>
+    <H2 CLASS="western">Type BOOLEAN</H2>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        Le codage de FALSE est
+        0
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        Le codage de TRUE est
+        Diff&eacute;rent de 0 (1-255)
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">FALSE / TRUE</P>
+    <TABLE WIDTH=180 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+        <COL WIDTH=79>
+        <COL WIDTH=21>
+        <COL WIDTH=55>
+        <THEAD>
+            <TR VALIGN=TOP>
+                <TD WIDTH=79>
+                    <P CLASS="western">T</P>
+                </TD>
+                <TD WIDTH=21>
+                    <P CLASS="western">L</P>
+                </TD>
+                <TD WIDTH=55>
+                    <P CLASS="western">V</P>
+                </TD>
+            </TR>
+        </THEAD>
+        <TBODY>
+            <TR VALIGN=TOP>
+                <TD WIDTH=79>
+                    <P CLASS="western">BOOLEAN</P>
+                </TD>
+                <TD WIDTH=21>
+                    <P CLASS="western">1</P>
+                </TD>
+                <TD WIDTH=55>
+                    <P CLASS="western">FALSE</P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=79>
+                    <P CLASS="western">01</P>
+                </TD>
+                <TD WIDTH=21>
+                    <P CLASS="western">01</P>
+                </TD>
+                <TD WIDTH=55>
+                    <P CLASS="western">0</P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=79>
+                    <P CLASS="western">BOOLEAN</P>
+                </TD>
+                <TD WIDTH=21>
+                    <P CLASS="western">1</P>
+                </TD>
+                <TD WIDTH=55>
+                    <P CLASS="western">TRUE</P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=79>
+                    <P CLASS="western">01</P>
+                </TD>
+                <TD WIDTH=21>
+                    <P CLASS="western">01</P>
+                </TD>
+                <TD WIDTH=55>
+                    <P CLASS="western">FF</P>
+                </TD>
+            </TR>
+        </TBODY>
+    </TABLE>
+    <H2 CLASS="western">Type INTEGER</H2>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        On cherche toujours a
+        r&eacute;duire la taille d'un integer au minimum indispensable.
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">Correct</P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">$1234</P>
+    <TABLE WIDTH=164 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+        <COL WIDTH=70>
+        <COL WIDTH=21>
+        <COL WIDTH=48>
+        <THEAD>
+            <TR VALIGN=TOP>
+                <TD WIDTH=70>
+                    <P CLASS="western">T</P>
+                </TD>
+                <TD WIDTH=21>
+                    <P CLASS="western">L</P>
+                </TD>
+                <TD WIDTH=48>
+                    <P CLASS="western">V</P>
+                </TD>
+            </TR>
+        </THEAD>
+        <TBODY>
+            <TR VALIGN=TOP>
+                <TD WIDTH=70>
+                    <P CLASS="western">INTEGER</P>
+                </TD>
+                <TD WIDTH=21>
+                    <P CLASS="western">2</P>
+                </TD>
+                <TD WIDTH=48>
+                    <P CLASS="western">$1234</P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=70>
+                    <P CLASS="western">02</P>
+                </TD>
+                <TD WIDTH=21>
+                    <P CLASS="western">02</P>
+                </TD>
+                <TD WIDTH=48>
+                    <P CLASS="western">12 34</P>
+                </TD>
+            </TR>
+        </TBODY>
+    </TABLE>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">Non optimis&eacute;.</P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">$1234</P>
+    <TABLE WIDTH=180 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+        <COL WIDTH=70>
+        <COL WIDTH=20>
+        <COL WIDTH=65>
+        <THEAD>
+            <TR VALIGN=TOP>
+                <TD WIDTH=70>
+                    <P CLASS="western">T</P>
+                </TD>
+                <TD WIDTH=20>
+                    <P CLASS="western">L</P>
+                </TD>
+                <TD WIDTH=65>
+                    <P CLASS="western">V</P>
+                </TD>
+            </TR>
+        </THEAD>
+        <TBODY>
+            <TR VALIGN=TOP>
+                <TD WIDTH=70>
+                    <P CLASS="western">INTEGER</P>
+                </TD>
+                <TD WIDTH=20>
+                    <P CLASS="western">3</P>
+                </TD>
+                <TD WIDTH=65>
+                    <P CLASS="western">$1234</P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=70>
+                    <P CLASS="western">02</P>
+                </TD>
+                <TD WIDTH=20>
+                    <P CLASS="western"><FONT SIZE=2><FONT FACE="Verdana, sans-serif">0</FONT></FONT>3</P>
+                </TD>
+                <TD WIDTH=65>
+                    <P CLASS="western">00 12 34</P>
+                </TD>
+            </TR>
+        </TBODY>
+    </TABLE>
+    <H2 CLASS="western">Type ENUMERATED</H2>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">Idem INTEGER</P>
+    <H2 CLASS="western">Type BITSTRING</H2>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        Les donn&eacute;es de
+        type BITSTRING peuvent &ecirc;tre Primitive ou Constructed. Elles
+        sont encod&eacute;es de la fa&ccedil;on suivante :
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        Un octet d'entete
+        <B>obligatoire</B> suivit de 0, 1 ou plus d'octets suivants.
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        ATTENTION!
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        Le champ d'ent&ecirc;te
+        &eacute;tant obligatoire, le champ <I>length</I> indique le nombre
+        d'octets de donn&eacute;es sans l'octet d'entete.
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        L'octet d'entete encode
+        le nombre de bits inutilis&eacute;s (0-7) du dernier octet
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        Chaque octet porte un
+        maximum de 8 bits utiles (MSB &agrave; gauche, c'est &agrave; dire en
+        B8). Le champ de bit est cadr&eacute; &agrave; gauche. Le premier bit
+        est en octet.0.8. Les bits non utilis&eacute;s sont forc&eacute;s &agrave;
+        0.
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        Exemple : soit &agrave;
+        transmettre un champ de 4 bits de valeur 0101
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        Ces bits sont num&eacute;rot&eacute;s
+        de 1 &agrave; 4
+    </P>
+    <TABLE WIDTH=207 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+        <COL WIDTH=75>
+        <COL WIDTH=18>
+        <COL WIDTH=18>
+        <COL WIDTH=63>
+        <THEAD>
+            <TR VALIGN=TOP>
+                <TD WIDTH=75>
+                    <P CLASS="western">T</P>
+                </TD>
+                <TD WIDTH=18>
+                    <P CLASS="western">L</P>
+                </TD>
+                <TD COLSPAN=2 WIDTH=88>
+                    <P CLASS="western">V</P>
+                </TD>
+            </TR>
+        </THEAD>
+        <TBODY>
+            <TR VALIGN=TOP>
+                <TD WIDTH=75>
+                    <P CLASS="western">BITSTRING</P>
+                </TD>
+                <TD WIDTH=18>
+                    <P CLASS="western">2</P>
+                </TD>
+                <TD WIDTH=18>
+                    <P CLASS="western">4</P>
+                </TD>
+                <TD WIDTH=63>
+                    <P CLASS="western">0101 ----</P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=75>
+                    <P CLASS="western">03</P>
+                </TD>
+                <TD WIDTH=18>
+                    <P CLASS="western">02</P>
+                </TD>
+                <TD WIDTH=18>
+                    <P CLASS="western">04</P>
+                </TD>
+                <TD WIDTH=63>
+                    <P CLASS="western"><FONT SIZE=2><FONT FACE="Verdana, sans-serif">5</FONT></FONT>0</P>
+                </TD>
+            </TR>
+        </TBODY>
+    </TABLE>
+    <H2 CLASS="western">Type OCTETSTRING</H2>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">Soit &agrave; encoder :</P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">&laquo;&nbsp;Hello&nbsp;&raquo;</P>
+    <TABLE WIDTH=300 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+        <COL WIDTH=96>
+        <COL WIDTH=18>
+        <COL WIDTH=160>
+        <THEAD>
+            <TR VALIGN=TOP>
+                <TD WIDTH=96>
+                    <P CLASS="western">T</P>
+                </TD>
+                <TD WIDTH=18>
+                    <P CLASS="western">L</P>
+                </TD>
+                <TD WIDTH=160>
+                    <P CLASS="western">V</P>
+                </TD>
+            </TR>
+        </THEAD>
+        <TBODY>
+            <TR VALIGN=TOP>
+                <TD WIDTH=96>
+                    <P CLASS="western">OCTETSTRING</P>
+                </TD>
+                <TD WIDTH=18>
+                    <P CLASS="western">5</P>
+                </TD>
+                <TD WIDTH=160>
+                    <P CLASS="western">'h', 'e', 'l', 'l', 'o' (ASCII)</P>
+                </TD>
+            </TR>
+            <TR VALIGN=TOP>
+                <TD WIDTH=96>
+                    <P CLASS="western">04</P>
+                </TD>
+                <TD WIDTH=18>
+                    <P CLASS="western">05</P>
+                </TD>
+                <TD WIDTH=160>
+                    <P CLASS="western">68 65 6C 6C 6F</P>
+                </TD>
+            </TR>
+        </TBODY>
+    </TABLE>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-top: 0.42cm; page-break-after: avoid">
+        <B><FONT SIZE=5><FONT FACE="Verdana, sans-serif"><FONT COLOR="#333366">ANNEXE</FONT></FONT></FONT></B>
+    </P>
+    <H1 CLASS="western">Automate d'analyse BER</H1>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <IMG SRC="ber_htm_m412bb810.gif" NAME="Image1" ALIGN=LEFT WIDTH=556 HEIGHT=455 BORDER=0><BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+    <DIV ID="sdfootnote1">
+        <P CLASS="sdfootnote" STYLE="margin-bottom: 0.5cm">
+            <A CLASS="sdfootnotesym" NAME="sdfootnote1sym" HREF="#sdfootnote1anc">1</A>Dans
+            la pratique, on ne devrait pas d&eacute;passer les valeurs 2 ou 3
+        </P>
+    </DIV>
+    <DIV ID="sdfootnote2">
+        <P CLASS="sdfootnote" STYLE="margin-bottom: 0.5cm">
+            <A CLASS="sdfootnotesym" NAME="sdfootnote2sym" HREF="#sdfootnote2anc">2</A>Pour
+            des extensions futures
+        </P>
+    </DIV>
+</BODY>
+</HTML>
